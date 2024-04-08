@@ -15,12 +15,14 @@ func Must[T any](v T, err error) T {
 	return v
 }
 
+// A function to handle func Fn(...) error.
 func Must0(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+// A function to handle func Fn(...) (T0, T1, error).
 func Must2[T0, T1 any](v0 T0, v1 T1, err error) (T0, T1) {
 	if err != nil {
 		panic(err)
