@@ -27,10 +27,10 @@ func TestMust(t *testing.T) {
 	})
 
 	t.Run("test error no panic", func(t *testing.T) {
-		hasErr := func() (int, error) {
+		noErr := func() (int, error) {
 			return 1, nil
 		}
-		v := xerr.Must(hasErr())
+		v := xerr.Must(noErr())
 		if v != 1 {
 			t.Fatalf("v != 1, v = %d", v)
 		}
@@ -45,9 +45,15 @@ func TestMust0(t *testing.T) {
 		}
 		xerr.Must0(hasErr())
 	})
+	t.Run("test error no panic", func(t *testing.T) {
+		hasErr := func() error {
+			return nil
+		}
+		xerr.Must0(hasErr())
+	})
 }
 
-func TestMus2(t *testing.T) {
+func TestMust2(t *testing.T) {
 	t.Run("test error panic ok", func(t *testing.T) {
 		defer recoverT(t)
 		hasErr := func() (string, int, error) {
@@ -57,10 +63,10 @@ func TestMus2(t *testing.T) {
 	})
 
 	t.Run("test error no panic", func(t *testing.T) {
-		hasErr := func() (string, int, error) {
+		noErr := func() (string, int, error) {
 			return "123", 1, nil
 		}
-		str, val := xerr.Must2(hasErr())
+		str, val := xerr.Must2(noErr())
 		if str != "123" || val != 1 {
 			t.Fatalf("str = [%s], val = [%d]", str, val)
 		}
