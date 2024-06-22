@@ -119,6 +119,6 @@ func TestMustOk(t *testing.T) {
 		mp.Store("1", 1)
 		mp.Store("2", 2)
 		mp.Store("3", 3)
-		_ = xerr.MustOk[int](mp.Load("3"))
+		_ = xerr.MustOk[int](mp.Load("4"))
 	})
 }
