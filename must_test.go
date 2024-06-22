@@ -3,6 +3,7 @@ package xerr_test
 import (
 	"errors"
 	"runtime/debug"
+	"sync"
 	"testing"
 
 	"github.com/lukaproject/xerr"
@@ -70,5 +71,54 @@ func TestMust2(t *testing.T) {
 		if str != "123" || val != 1 {
 			t.Fatalf("str = [%s], val = [%d]", str, val)
 		}
+	})
+}
+
+func TestMustOk(t *testing.T) {
+	t.Run("test case ok", func(t *testing.T) {
+		mp := &sync.Map{}
+		mp.Store("1", 1)
+		mp.Store("2", 2)
+		mp.Store("3", 3)
+
+		result := xerr.MustOk[int](mp.Load("1"))
+		if result != 1 {
+			t.Fatalf("result is not equal to 1")
+		}
+	})
+
+	t.Run("test cast failed", func(t *testing.T) {
+		defer func() {
+			if err := recover(); err == nil {
+				panic("expect cast failed")
+			} else {
+				if err.(error).Error() != "can't cast v[int]" {
+					panic("unexpect error message")
+				}
+			}
+		}()
+		mp := &sync.Map{}
+		mp.Store("1", 1)
+		mp.Store("2", 2)
+		mp.Store("3", 3)
+
+		_ = xerr.MustOk[string](mp.Load("1"))
+	})
+
+	t.Run("test not ok", func(t *testing.T) {
+		defer func() {
+			if err := recover(); err == nil {
+				panic("expect not ok failed")
+			} else {
+				if err.(error).Error() != "not ok" {
+					panic("unexpect error message")
+				}
+			}
+		}()
+		mp := &sync.Map{}
+		mp.Store("1", 1)
+		mp.Store("2", 2)
+		mp.Store("3", 3)
+		_ = xerr.MustOk[int](mp.Load("3"))
 	})
 }
